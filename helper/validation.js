@@ -1,5 +1,4 @@
 const Joi = require("joi");
-
 //validation register
 exports.registerValidation = data => {
   const schema = Joi.object({
@@ -26,8 +25,7 @@ exports.loginValidation = data => {
 exports.materiValidation = data => {
   const schema = Joi.object({
     nama_matakuliah: Joi.string().required(),
-    judul: Joi.string().required(),
-    file_url: Joi.string().required()
+    judul: Joi.string().required()
   });
   return schema.validate(data);
 }

@@ -3,7 +3,13 @@ module.exports = (sequelize, DataTypes) => {
   const Materi = sequelize.define('Materi', {
     nama_matakuliah: DataTypes.STRING,
     judul: DataTypes.STRING,
-    file_url: DataTypes.STRING,
+    file_url: {
+      type: DataTypes.STRING,
+      get() {
+        const image = this.getDataValue('file_url');
+        return `uploads/${image}`;
+      }
+    },
     userId: {
       type: DataTypes.INTEGER,
       references: {

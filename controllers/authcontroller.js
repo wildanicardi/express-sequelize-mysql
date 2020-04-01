@@ -1,10 +1,21 @@
-const { User } = require("../models");
-const { registerValidation, loginValidation } = require("../helper/validation");
+const {
+  User
+} = require("../models");
+const {
+  registerValidation,
+  loginValidation
+} = require("../helper/validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 exports.registerUser = async (req, res) => {
-  const { nama, email, password } = req.body;
-  const { error } = registerValidation({
+  const {
+    nama,
+    email,
+    password
+  } = req.body;
+  const {
+    error
+  } = registerValidation({
     nama,
     email,
     password
@@ -44,8 +55,13 @@ exports.registerUser = async (req, res) => {
   }
 };
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  const { error } = loginValidation({
+  const {
+    email,
+    password
+  } = req.body;
+  const {
+    error
+  } = loginValidation({
     email,
     password
   });
@@ -65,13 +81,12 @@ exports.login = async (req, res) => {
       status: 400,
       message: "Email atau password salah"
     });
-  const token = jwt.sign(
-    {
+  const token = jwt.sign({
       id: user.id
     },
     process.env.TOKEN_SECRET
   );
-  res.header("auth-token", token).json({
+  res.json({
     access_token: token,
     status: 200,
     message: "login sukses"

@@ -1,10 +1,11 @@
 # CRUD Express with sequelize orm and database mysql
 
-##install
+## install
+$npm install
 
-npm install
+## migrate database 
+$ npm run sequelize -- db:migrate
 
 ## Run project
-
-nodemon  and run mysql
+$ nodemon  and run mysql
 

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 exports.auth = (req, res, next) => {
-  const token = req.header('auth-token');
+  const token = req.headers.authorization.split(" ")[1];
   if (!token) return res.json({
     status: 401,
     message: 'Acces Denied'

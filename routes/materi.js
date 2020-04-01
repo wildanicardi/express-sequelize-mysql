@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const {
   auth
-} = require('../helper/verifytoken');
+} = require('../middleware/verifytoken');
 const {
   storeMateri,
   indexMateri,
@@ -9,11 +9,23 @@ const {
   deleteMateri,
   showMateri
 } = require('../controllers/matericontroller');
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + file.originalname)
+  }
+});
+const upload = multer({
+  storage: storage
+})
 
-router.get('/:id', auth, showMateri);
+router.get('/:idMateri', auth, showMateri);
 router.get('/', auth, indexMateri);
-router.post('/', auth, storeMateri);
-router.patch('/:id', auth, updateMateri);
-router.delete('/:id', auth, deleteMateri);
+router.post('/', auth, upload.single('file_url'), storeMateri);
+router.patch('/:idMateri', auth, updateMateri);
+router.delete('/:idMateri', auth, deleteMateri);
 
 module.exports = router;

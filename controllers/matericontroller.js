@@ -4,34 +4,31 @@ const {
 const {
   materiValidation
 } = require("../helper/validation");
-const atob = require("atob");
 
 exports.storeMateri = async (req, res) => {
   const {
     nama_matakuliah,
-    judul,
-    file_url
+    judul
   } = req.body;
+  const {
+    id
+  } = req.user;
   const {
     error
   } = materiValidation({
     nama_matakuliah,
     judul,
-    file_url
   });
   if (error)
     return res.json({
       status: 400,
       message: "Kesalahan dalam validasi"
     });
-  const token = req.header("auth-token").split(".")[1];
-  const payload = JSON.parse(atob(token));
-  const id = payload.id;
   try {
     const result = await Materi.create({
       nama_matakuliah,
       judul,
-      file_url,
+      file_url: req.file.originalname,
       userId: id
     });
     res.json({
@@ -47,8 +44,14 @@ exports.storeMateri = async (req, res) => {
 
 };
 exports.indexMateri = async (req, res) => {
+  const {
+    id
+  } = req.user;
   try {
     const result = await Materi.findAll({
+      where: {
+        userId: id
+      },
       include: ['User']
     });
     res.json({
@@ -63,16 +66,22 @@ exports.indexMateri = async (req, res) => {
   }
 };
 exports.updateMateri = async (req, res) => {
-  const id = req.params.id;
+  const {
+    id
+  } = req.user;
   const {
     nama_matakuliah,
     judul,
     file_url
   } = req.body;
   try {
+    const {
+      idMateri
+    } = req.params;
     const materi = await Materi.findOne({
       where: {
-        id: id
+        id: idMateri,
+        userId: id
       }
     });
     const result = await Materi.update({
@@ -102,13 +111,17 @@ exports.updateMateri = async (req, res) => {
   }
 }
 exports.deleteMateri = async (req, res) => {
+  const {
+    id
+  } = req.user;
   try {
     const {
-      id
+      idMateri
     } = req.params;
     const materi = await Materi.findOne({
       where: {
-        id: id
+        id: idMateri,
+        userId: id
       }
     });
     const result = await Materi.destroy({
@@ -134,13 +147,17 @@ exports.deleteMateri = async (req, res) => {
   }
 };
 exports.showMateri = async (req, res) => {
+  const {
+    id
+  } = req.user;
   try {
     const {
-      id
+      idMateri
     } = req.params;
     const result = await Materi.findOne({
       where: {
-        id: id
+        id: idMateri,
+        userId: id
       },
       include: ['User']
     });

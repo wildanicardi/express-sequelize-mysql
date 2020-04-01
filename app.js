@@ -5,6 +5,9 @@ const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+var cors = require('cors');
+
+
 // import route
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/user");
@@ -13,7 +16,8 @@ const materiRoute = require("./routes/materi");
 
 dotenv.config();
 const app = express();
-const port = 3000;
+app.use(cors());
+const port = 8000;
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(
@@ -23,9 +27,6 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-// view engine setup
-// app.set("views", path.join(__dirname, "views"));
-// app.set("view engine", "ejs");
 
 // middleware
 app.use(express.json());
