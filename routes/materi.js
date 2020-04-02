@@ -25,7 +25,7 @@ const upload = multer({
 router.get('/:idMateri', auth, showMateri);
 router.get('/', auth, indexMateri);
 router.post('/', auth, upload.single('file_url'), storeMateri);
-router.patch('/:idMateri', auth, updateMateri);
+router.patch('/:idMateri', auth, upload.single('file_url'), updateMateri);
 router.delete('/:idMateri', auth, deleteMateri);
 
 module.exports = router;

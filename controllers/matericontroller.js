@@ -72,35 +72,41 @@ exports.updateMateri = async (req, res) => {
   const {
     nama_matakuliah,
     judul,
-    file_url
   } = req.body;
+  const {
+    error
+  } = materiValidation({
+    nama_matakuliah,
+    judul,
+  });
+  if (error)
+    return res.json({
+      status: 400,
+      message: "Kesalahan dalam validasi"
+    });
   try {
     const {
       idMateri
     } = req.params;
-    const materi = await Materi.findOne({
+    const result = await Materi.update({
+      nama_matakuliah,
+      judul,
+      file_url: req.file.originalname
+    }, {
       where: {
         id: idMateri,
         userId: id
       }
     });
-    const result = await Materi.update({
-      nama_matakuliah,
-      judul,
-      file_url
-    }, {
-      where: {
-        id: id
-      }
-    });
-    if (result && materi) {
+    if (result) {
       res.json({
         success: 200,
         message: "Materi berhasil di update",
+        data: result
       });
     } else {
       res.json({
-        message: `Materi dengan id=${id} tidak ada`
+        message: `Materi dengan id=${idMateri} tidak ada`
       });
     }
   } catch (error) {
@@ -118,25 +124,20 @@ exports.deleteMateri = async (req, res) => {
     const {
       idMateri
     } = req.params;
-    const materi = await Materi.findOne({
+    const result = await Materi.destroy({
       where: {
         id: idMateri,
         userId: id
       }
     });
-    const result = await Materi.destroy({
-      where: {
-        id: id
-      }
-    });
-    if (result && materi) {
+    if (result) {
       res.json({
         success: 200,
         message: "Materi berhasil di hapus",
       });
     } else {
       res.json({
-        message: `Materi dengan id=${id} tidak ada`
+        message: `Materi dengan id=${idMateri} tidak ada`
       });
     }
   } catch (error) {
