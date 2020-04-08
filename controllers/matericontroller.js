@@ -22,7 +22,7 @@ exports.storeMateri = async (req, res) => {
   if (error)
     return res.json({
       status: 400,
-      message: "Kesalahan dalam validasi"
+      message: `Kesalahan dalam validasi ${error}`
     });
   try {
     const result = await Materi.create({

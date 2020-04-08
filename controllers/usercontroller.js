@@ -15,3 +15,24 @@ exports.userIndex = async (req, res) => {
     })
   }
 }
+exports.userMe = async (req, res) => {
+  const {
+    id
+  } = req.user;
+  try {
+    const result = await User.findOne({
+      where: {
+        id: id
+      }
+    });
+    res.json({
+      success: 200,
+      data: result
+    })
+  } catch (error) {
+    res.json({
+      status: 500,
+      message: error.message
+    });
+  }
+}
