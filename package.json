@@ -4,7 +4,7 @@
   "description": "Project TA backend express and mysql",
   "main": "app.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js"
   },
   "keywords": [
     "express",
