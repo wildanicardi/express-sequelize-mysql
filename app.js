@@ -5,8 +5,7 @@ const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
-var cors = require('cors');
-
+var cors = require("cors");
 
 // import route
 const authRoute = require("./routes/auth");
@@ -22,7 +21,7 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: false
+    extended: false,
   })
 );
 app.use(cookieParser());
@@ -47,3 +46,4 @@ app.get("/", (req, res, next) => {
 // });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+module.exports = app;
