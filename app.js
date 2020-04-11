@@ -17,7 +17,7 @@ const materiRoute = require("./routes/materi");
 dotenv.config();
 const app = express();
 app.use(cors());
-const port = 8000;
+const port = 8080;
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(
