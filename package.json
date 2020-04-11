@@ -2,7 +2,6 @@
   "name": "project-express",
   "version": "1.0.0",
   "description": "Project TA backend express and mysql",
-  "main": "app.js",
   "scripts": {
     "start": "node ./bin/www"
   },

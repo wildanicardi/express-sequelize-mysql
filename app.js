@@ -16,7 +16,6 @@ const materiRoute = require("./routes/materi");
 dotenv.config();
 const app = express();
 app.use(cors());
-const port = 8080;
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(
@@ -45,5 +44,5 @@ app.get("/", (req, res, next) => {
 //   next(err);
 // });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(() => console.log(`Example app listening on port 3000`));
 module.exports = app;
