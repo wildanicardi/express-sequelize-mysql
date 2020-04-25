@@ -1,4 +1,8 @@
 const Joi = require("joi");
+const {
+  User
+} = require("../models");
+const bcrypt = require("bcryptjs");
 //validation register
 exports.registerValidation = data => {
   const schema = Joi.object({
@@ -28,4 +32,29 @@ exports.materiValidation = data => {
     judul: Joi.string().required()
   });
   return schema.validate(data);
-}
+};
+exports.findByCredentials = async ({
+  email,
+  password
+}) => {
+
+  const user = await User.findOne({
+    where: {
+      email: email
+    }
+  });
+  if (!user) {
+    return res.json({
+      status: 400,
+      message: "Email salah"
+    });
+  }
+  const validPass = await bcrypt.compare(password, user.password);
+  if (!validPass) {
+    return res.json({
+      status: 400,
+      message: "Password salah"
+    });
+  }
+  return user;
+};

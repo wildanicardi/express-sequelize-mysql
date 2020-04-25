@@ -3,7 +3,8 @@ const {
 } = require("../models");
 const {
   registerValidation,
-  loginValidation
+  loginValidation,
+  findByCredentials
 } = require("../helper/validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -70,25 +71,42 @@ exports.login = async (req, res) => {
       status: 400,
       message: "Kesalahan dalam validasi"
     });
-  const user = await User.findOne({
-    where: {
-      email: email
-    }
-  });
-  const validPass = await bcrypt.compare(password, user.password);
-  if (!user && !validPass)
-    return res.json({
-      status: 400,
+  try {
+    const user = await findByCredentials({
+      email,
+      password
+    });
+    const token = jwt.sign({
+        id: user.id
+      },
+      process.env.TOKEN_SECRET
+    );
+    res.json({
+      access_token: token,
+      status: 200,
+      message: "login sukses"
+    });
+  } catch (error) {
+    res.json({
+      status: 500,
       message: "Email atau password salah"
     });
-  const token = jwt.sign({
-      id: user.id
-    },
-    process.env.TOKEN_SECRET
-  );
-  res.json({
-    access_token: token,
-    status: 200,
-    message: "login sukses"
-  });
+  }
 };
+exports.logout = async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  if (!token) return res.json({
+    status: 401,
+    message: 'Acces Denied'
+  });
+  try {
+    const verified = await jwt.destroy(token);
+    return res.json({
+      status: 200,
+      message: "Berhasil Logout"
+    });
+  } catch (error) {
+    console.log(error.message);
+
+  }
+}
