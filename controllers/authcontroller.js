@@ -4,7 +4,7 @@ const {
 const {
   registerValidation,
   loginValidation,
-  findByCredentials
+  findByCredentials,
 } = require("../helper/validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -19,22 +19,22 @@ exports.registerUser = async (req, res) => {
   } = registerValidation({
     nama,
     email,
-    password
+    password,
   });
   if (error)
     return res.json({
       status: 400,
-      message: "Kesalahan dalam validasi"
+      message: "Kesalahan dalam validasi",
     });
   const emailExist = await User.findOne({
     where: {
-      email: email
-    }
+      email: email,
+    },
   });
   if (emailExist)
     return res.json({
       status: 400,
-      message: "Email sudah ada"
+      message: "Email sudah ada",
     });
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
@@ -42,16 +42,16 @@ exports.registerUser = async (req, res) => {
     const result = await User.create({
       nama,
       email,
-      password: hashPassword
+      password: hashPassword,
     });
     res.json({
       success: 200,
-      data: result
+      data: result,
     });
   } catch (error) {
     res.json({
       status: 500,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -64,49 +64,32 @@ exports.login = async (req, res) => {
     error
   } = loginValidation({
     email,
-    password
+    password,
   });
   if (error)
     return res.json({
       status: 400,
-      message: "Kesalahan dalam validasi"
+      message: error,
     });
   try {
     const user = await findByCredentials({
       email,
-      password
+      password,
     });
     const token = jwt.sign({
-        id: user.id
+        id: user.id,
       },
       process.env.TOKEN_SECRET
     );
     res.json({
       access_token: token,
       status: 200,
-      message: "login sukses"
+      message: "login sukses",
     });
   } catch (error) {
     res.json({
       status: 500,
-      message: "Email atau password salah"
+      message: "Email atau password salah",
     });
   }
 };
-exports.logout = async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
-  if (!token) return res.json({
-    status: 401,
-    message: 'Acces Denied'
-  });
-  try {
-    const verified = await jwt.destroy(token);
-    return res.json({
-      status: 200,
-      message: "Berhasil Logout"
-    });
-  } catch (error) {
-    console.log(error.message);
-
-  }
-}
