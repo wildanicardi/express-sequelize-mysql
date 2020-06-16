@@ -5,10 +5,6 @@ module.exports = (sequelize, DataTypes) => {
     judul: DataTypes.STRING,
     file_url: {
       type: DataTypes.STRING,
-      get() {
-        const image = this.getDataValue('file_url');
-        return `uploads/${image}`;
-      }
     },
     userId: {
       type: DataTypes.INTEGER,

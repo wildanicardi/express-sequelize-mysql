@@ -1,134 +1,117 @@
-const {
-  Materi
-} = require("../models");
-const {
-  materiValidation
-} = require("../helper/validation");
+const { Materi } = require("../models");
+const { materiValidation } = require("../helper/validation");
 
 exports.storeMateri = async (req, res) => {
-  const {
-    nama_matakuliah,
-    judul
-  } = req.body;
-  const {
-    id
-  } = req.user;
-  const {
-    error
-  } = materiValidation({
+  const { nama_matakuliah, judul } = req.body;
+  const { id } = req.user;
+  const { error } = materiValidation({
     nama_matakuliah,
     judul,
   });
   if (error)
     return res.json({
       status: 400,
-      message: `Kesalahan dalam validasi ${error}`
+      message: `Kesalahan dalam validasi ${error}`,
     });
   try {
     const result = await Materi.create({
       nama_matakuliah,
       judul,
-      file_url: req.file.originalname,
-      userId: id
+      file_url: req.file.filename,
+      userId: id,
     });
     res.json({
       success: 200,
-      data: result
+      data: result,
     });
   } catch (error) {
     res.json({
       status: 500,
-      message: error.message
+      message: error.message,
     });
   }
-
 };
 exports.indexMateri = async (req, res) => {
-  const {
-    id
-  } = req.user;
+  const { id } = req.user;
   try {
     const result = await Materi.findAll({
       where: {
-        userId: id
+        userId: id,
       },
-      include: ['User']
+      include: ["User"],
+      raw: true,
+    });
+    const data = result.map((item) => {
+      const url = req.protocol + "://" + req.get("host");
+      const file_url = JSON.parse(JSON.stringify(item.file_url));
+      item.file_url = url + "/uploads/" + file_url;
+      return item;
     });
     res.json({
       success: 200,
-      data: result
+      data: data,
     });
   } catch (error) {
     res.json({
       status: 500,
-      message: error.message
+      message: error.message,
     });
   }
 };
 exports.updateMateri = async (req, res) => {
-  const {
-    id
-  } = req.user;
-  const {
-    nama_matakuliah,
-    judul,
-  } = req.body;
-  const {
-    error
-  } = materiValidation({
+  const { id } = req.user;
+  const { nama_matakuliah, judul } = req.body;
+  const { error } = materiValidation({
     nama_matakuliah,
     judul,
   });
   if (error)
     return res.json({
       status: 400,
-      message: "Kesalahan dalam validasi"
+      message: "Kesalahan dalam validasi",
     });
   try {
-    const {
-      idMateri
-    } = req.params;
-    const result = await Materi.update({
-      nama_matakuliah,
-      judul,
-      file_url: req.file.originalname
-    }, {
-      where: {
-        id: idMateri,
-        userId: id
+    const { idMateri } = req.params;
+    const result = await Materi.update(
+      {
+        nama_matakuliah,
+        judul,
+        file_url: req.file.originalname,
+      },
+      {
+        where: {
+          id: idMateri,
+          userId: id,
+        },
       }
-    });
+    );
     if (result) {
       res.json({
         success: 200,
         message: "Materi berhasil di update",
-        data: result
+        data: result,
       });
     } else {
       res.json({
-        message: `Materi dengan id=${idMateri} tidak ada`
+        message: `Materi dengan id=${idMateri} tidak ada`,
       });
     }
   } catch (error) {
     res.json({
       status: 500,
-      message: error.message
+      message: error.message,
     });
   }
-}
+};
 exports.deleteMateri = async (req, res) => {
-  const {
-    id
-  } = req.user;
+  const { id } = req.user;
   try {
-    const {
-      idMateri
-    } = req.params;
+    const { idMateri } = req.params;
     const result = await Materi.destroy({
       where: {
         id: idMateri,
-        userId: id
-      }
+        userId: id,
+      },
     });
     if (result) {
       res.json({
@@ -137,39 +120,35 @@ exports.deleteMateri = async (req, res) => {
       });
     } else {
       res.json({
-        message: `Materi dengan id=${idMateri} tidak ada`
+        message: `Materi dengan id=${idMateri} tidak ada`,
       });
     }
   } catch (error) {
     res.json({
       status: 500,
-      message: error.message
+      message: error.message,
     });
   }
 };
 exports.showMateri = async (req, res) => {
-  const {
-    id
-  } = req.user;
+  const { id } = req.user;
   try {
-    const {
-      idMateri
-    } = req.params;
+    const { idMateri } = req.params;
     const result = await Materi.findOne({
       where: {
         id: idMateri,
-        userId: id
+        userId: id,
       },
-      include: ['User']
+      include: ["User"],
     });
     res.json({
       success: 200,
-      data: result
+      data: result,
     });
   } catch (error) {
     res.json({
       status: 500,
-      message: error.message
+      message: error.message,
     });
   }
-}
+};
